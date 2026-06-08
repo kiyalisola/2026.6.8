@@ -210,6 +210,16 @@ textarea:focus {
     transform: scale(1);
 }
 
+
+.image-upload-input {
+    position: fixed;
+    left: -9999px;
+    top: 0;
+    width: 1px;
+    height: 1px;
+    opacity: 0;
+    pointer-events: none;
+}
 .file-input {
     position: absolute;
     inset: 0;
@@ -766,6 +776,7 @@ textarea:focus {
         grid-template-columns: 1fr;
     }
 }
+
 
 
 

@@ -168,6 +168,19 @@ function handleInlineEditorClick(event) {
         return;
     }
 
+    const uploadTarget = event.target.closest('[data-field="upload"]');
+
+    if (uploadTarget) {
+        const input = inlineEditors.querySelector('.image-upload-input[data-index="' + uploadTarget.dataset.index + '"]');
+
+        if (input) {
+            input.value = "";
+            input.click();
+        }
+
+        return;
+    }
+
     const cropTarget = event.target.closest('[data-field="crop"]');
 
     if (!cropTarget) {
@@ -416,7 +429,7 @@ function renderInlineEditors(slots, focusState) {
 
     slots.forEach((slot, index) => {
         const character = characters[index];
-        const portrait = document.createElement(isDeleteMode || character.image ? "button" : "label");
+        const portrait = document.createElement("button");
         portrait.className = "portrait-editor";
         portrait.dataset.thumb = String(index);
         portrait.style.left = toPercent(slot.centerX - slot.radius, canvas.width);
@@ -437,7 +450,9 @@ function renderInlineEditors(slots, focusState) {
             portrait.dataset.field = "crop";
             portrait.dataset.index = String(index);
         } else {
-            portrait.innerHTML = `<input class="file-input" data-field="image" data-index="${index}" type="file" accept="image/*">`;
+            portrait.type = "button";
+            portrait.dataset.field = "upload";
+            portrait.dataset.index = String(index);
         }
 
         const nameEditor = createTextEditor({
@@ -471,11 +486,27 @@ function renderInlineEditors(slots, focusState) {
         });
 
         inlineEditors.appendChild(portrait);
+
+        if (!isDeleteMode && !character.image) {
+            inlineEditors.appendChild(createImageUploadInput(index));
+        }
+
         inlineEditors.appendChild(nameEditor);
         inlineEditors.appendChild(descEditor);
     });
 
     restoreFocus(focusState);
+}
+
+function createImageUploadInput(index) {
+    const input = document.createElement("input");
+    input.className = "image-upload-input";
+    input.dataset.field = "image";
+    input.dataset.index = String(index);
+    input.type = "file";
+    input.accept = "image/*";
+
+    return input;
 }
 
 function createTextEditor(options) {
@@ -939,6 +970,7 @@ function downloadImage() {
 
 bindEvents();
 drawTemplate();
+
 
 
 
